@@ -40,6 +40,88 @@ wire   [31 : 0]   rob_if_jptarget;
 wire              lsb_if_full;
 wire              rob_if_full;
 wire    [31 : 0]  if_de_rdval;
+
+wire            ic_mem_fg   ;
+
+wire  [31 : 0]  mem_ram_a;
+wire  [7  : 0]  mem_ram_wri;
+wire           mem_ram_wrifla;
+  
+wire [7 : 0]  ram_mem_result;
+  
+wire [31 : 0] ic_mem_a;
+wire          ic_mem_flag; // is wating for instruction
+wire [31 : 0]  mem_ic_val;
+wire           mem_ic_fg; 
+  
+wire          mem_lsb_memok;
+
+wire  [31 : 0] mem_lsb_val;
+
+wire [5 :  0]  de_rob_op;
+wire [6 : 0]   de_rob_oph;
+wire [31 : 0]  de_rob_imm;
+wire [4 :  0]  de_rob_rs1;
+wire [4 :  0]  de_rob_rs2;
+wire [4 :  0]  de_rob_rd;
+wire          de_rob_flag;
+wire [31 : 0] de_rob_rdval;
+
+wire [5 : 0] rs_alu_op;
+wire [31 : 0]rs_alu_rs1;
+wire [31 : 0]rs_alu_rs2;
+wire rs_alu_fg;
+wire [3 : 0]rs_alu_rob;
+wire rs_if_full;
+
+wire    [31 : 0]     rob_CDB_imm;
+wire    [5 : 0]     rob_CDB_op;
+wire    [6 : 0]     rob_CDB_oph;
+wire                rob_CDB_fg;
+wire    [4 : 0]     rob_CDB_rd;
+wire    [31 : 0]     rob_CDB_rs1val;
+wire    [31 : 0]     rob_CDB_rs2val;
+wire                 rob_CDB_rs1fg;
+wire                 rob_CDB_rs2fg;
+
+//ALU
+wire  [`RBID]   alu_CDB_reorder;
+wire   [`RLEN]  alu_CDB_val;
+wire            alu_CDB_flag;
+wire   [5 : 0]  alu_CDB_op;
+//regfile
+wire [4 : 0]      rob_reg_rs1a;
+wire [4 : 0]      rob_reg_rs2a;
+wire              reg_rob_rs1fg;
+wire              reg_rob_rs2fg;
+wire  [31 : 0]    reg_rob_val1;
+wire  [31 : 0]    reg_rob_val2;
+//LSB
+//  wire [`RBID] lsb_rob_reorder;
+//  wire         lsb_rob_fg;
+//  wire  [5 : 0] lsb_rob_op;
+//  wire  [31 : 0]lsb_rob_val;
+//CDB
+
+wire  [31 : 0] rob_CDB_outval;
+wire   [4 : 0]rob_CDB_inidx;
+wire   [4 : 0]rob_CDB_outidx;
+wire   rob_CDB_outflag;
+wire   rob_CDB_inflag;
+wire  [`RBID] front_CDB;
+wire [`RBID] rear_CDB;
+wire         rob_if_jalr;
+
+wire   lsb_mem_fg;
+wire [31 : 0]  lsb_mem_a;
+wire [31 :0]   lsb_mem_val;
+wire [5 : 0]  lsb_mem_op;
+//CDB to ROB
+wire [`RBID]  lsb_CDB_reorder;
+wire [31: 0]  lsb_CDB_val;
+wire          lsb_CDB_fg;
+wire [5 : 0]  lsb_CDB_op;
+
 IF IF(
   .clk(clk_in),
   .rst(rst_in),
@@ -64,13 +146,6 @@ IF IF(
 );
 
 
-
-
-
-wire            ic_mem_fg   ;
-
-
-
 ICache IC(
   .clk(clk_in),
   .rst(rst_in),
@@ -86,21 +161,7 @@ ICache IC(
   .ins_mem(mem_ic_val),
   .ins_mem_flag(mem_ic_fg)         
 );
-    wire  [31 : 0]  mem_ram_a;
-    wire  [7  : 0]  mem_ram_wri;
-    wire           mem_ram_wrifla;
   
-    wire [7 : 0]  ram_mem_result;
-  
-    wire [31 : 0] ic_mem_a;
-    wire          ic_mem_flag; // is wating for instruction
-    wire [31 : 0]  mem_ic_val;
-    wire           mem_ic_fg; 
-  
-    wire          mem_lsb_memok;
-    
-    wire  [31 : 0] mem_lsb_val;
-
 MemCtrl Memctrl(
   .clk(clk_in),
   .rst(rst_in),
@@ -126,14 +187,7 @@ MemCtrl Memctrl(
 );
   
   
-  wire [5 :  0]  de_rob_op;
-  wire [6 : 0]   de_rob_oph;
-  wire [31 : 0]  de_rob_imm;
-  wire [4 :  0]  de_rob_rs1;
-  wire [4 :  0]  de_rob_rs2;
-  wire [4 :  0]  de_rob_rd;
-  wire          de_rob_flag;
-  wire [31 : 0] de_rob_rdval;
+  
 Decoder Decoder(
   .clk(clk_in),
   .rst(rst_in),
@@ -156,12 +210,7 @@ Decoder Decoder(
   .rob_rd_val(de_rob_rdval)
 );
 
-wire [5 : 0] rs_alu_op;
-wire [31 : 0]rs_alu_rs1;
-wire [31 : 0]rs_alu_rs2;
-wire rs_alu_fg;
-wire [3 : 0]rs_alu_rob;
-wire rs_if_full;
+
 RS RS(
   .clk(clk_in),
   .rst(rst_in),
@@ -199,43 +248,7 @@ RS RS(
   .lsb_flag(lsb_CDB_fg)
 );
 //CDB to RS&LSB
-wire    [31 : 0]     rob_CDB_imm;
-wire    [5 : 0]     rob_CDB_op;
-wire    [6 : 0]     rob_CDB_oph;
-wire                rob_CDB_fg;
-wire    [4 : 0]     rob_CDB_rd;
-wire    [31 : 0]     rob_CDB_rs1val;
-wire    [31 : 0]     rob_CDB_rs2val;
-wire                 rob_CDB_rs1fg;
-wire                 rob_CDB_rs2fg;
 
-//ALU
-wire  [`RBID]   alu_CDB_reorder;
-wire   [`RLEN]  alu_CDB_val;
-wire            alu_CDB_flag;
-wire   [5 : 0]  alu_CDB_op;
-//regfile
-wire [4 : 0]      rob_reg_rs1a;
-wire [4 : 0]      rob_reg_rs2a;
-wire              reg_rob_rs1fg;
-wire              reg_rob_rs2fg;
-wire  [31 : 0]    reg_rob_val1;
-wire  [31 : 0]    reg_rob_val2;
-//LSB
-//  wire [`RBID] lsb_rob_reorder;
-//  wire         lsb_rob_fg;
-//  wire  [5 : 0] lsb_rob_op;
-//  wire  [31 : 0]lsb_rob_val;
-//CDB
-
-  wire  [31 : 0] rob_CDB_outval;
-  wire   [4 : 0]rob_CDB_inidx;
-  wire   [4 : 0]rob_CDB_outidx;
-  wire   rob_CDB_outflag;
-  wire   rob_CDB_inflag;
-  wire  [`RBID] front_CDB;
-  wire [`RBID] rear_CDB;
-  wire         rob_if_jalr;
 ROB ROB(
     .clk(clk_in),
     .rst(rst_in),
@@ -294,15 +307,7 @@ ROB ROB(
     .lsb_val(lsb_CDB_val)
  );  
 //memctrl
-wire   lsb_mem_fg;
-wire [31 : 0]  lsb_mem_a;
-wire [31 :0]   lsb_mem_val;
-wire [5 : 0]  lsb_mem_op;
-//CDB to ROB
-wire [`RBID]  lsb_CDB_reorder;
-wire [31: 0]  lsb_CDB_val;
-wire          lsb_CDB_fg;
-wire [5 : 0]  lsb_CDB_op;
+
 //alu CDB
 
 LSB LSB(
