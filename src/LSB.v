@@ -116,12 +116,11 @@ always @(posedge clk) begin//接受信息，将指令加入lsb
             end
             default:;
         endcase
-        
-        if(front==rear && is_commit[front]==`False)begin//rear
+    end
+    if(front==rear && is_commit[front]==`False)begin//rear
             full <= `True;
         end
-        else full <= `False;
-    end
+    else full <= `False;
     
     if(front != rear || front == rear && is_commit[front] == `False)begin//push front
         if(rs1_ready[front]&&rs2_ready[front])begin

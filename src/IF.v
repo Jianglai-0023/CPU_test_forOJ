@@ -34,7 +34,7 @@ reg     is_stall;
 
     // assign ins_flag = ins_ori_flag;
     assign ins = ins_ori;
-    assign pc_flag = !ins_ori_flag&&!is_stall;
+    assign pc_flag = !ins_ori_flag&&!is_stall&&!rob_full&&!lsb_full&&!rs_full;
     //calculate imm
     always @(*)begin//向decode输出结果
         //修改输出的bc
@@ -108,7 +108,7 @@ reg     is_stall;
             if(jp_isjalr)pc_cache<=jp_target;
             else pc_cache <= pc_cache + jp_target;
         end
-        else if(!is_stall)begin
+        else if(ins_ori_flag&&!is_stall&&!lsb_full && !rob_full && !rs_full)begin
             // pc_flag <= `True;
             // ins_flag <= ins_ori_flag;
             if(ins_ori_flag)begin   
@@ -117,7 +117,7 @@ reg     is_stall;
             case(ins_ori[6:0])
             
                 `AUIPCOP:begin
-                    pc_cache <= pc_cache + ins_imm;
+                    pc_cache <= pc_cache + 4;
                     // pc_flag <= `True;
                 end 
                 `JALOP  :begin

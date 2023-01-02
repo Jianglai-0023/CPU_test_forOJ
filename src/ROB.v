@@ -256,13 +256,13 @@ always @(posedge clk) begin//考虑ROB is full
         end
         if(is_full)is_full<= `False;
         else ;
-    end
-    else begin
+  end
+  else begin
       rd_out_fg<= `False;
       op_is_jp <= `False;
-    end
+  end
 
-    if(alu_flag)begin//更新ready
+  if(alu_flag)begin//更新ready
         if(alu_opcode==`LB||alu_opcode==`LH||alu_opcode==`LW||alu_opcode==`LBU||alu_opcode==`LHU||alu_opcode == `SB || alu_opcode == `SH || alu_opcode==`SW)begin
         end
         else begin
@@ -275,18 +275,18 @@ always @(posedge clk) begin//考虑ROB is full
 
           is_ready[rob_reorder] <= `True;  
         end
-    end
-    else ;
+  end
+  else ;
 
-    if(lsb_flag)begin
+  if(lsb_flag)begin
       if(lsb_op==`LB||lsb_op==`LH||lsb_op==`LW||lsb_op==`LBU||lsb_op==`LHU)begin
         val[lsb_reorder] <= lsb_val;
         is_ready[lsb_reorder] <= 1;
       end
       else ;
-    end
-    else;
   end
+  else;
+end
   
   
 endmodule

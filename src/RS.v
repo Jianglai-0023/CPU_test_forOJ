@@ -63,6 +63,7 @@ always @(*) begin
         else isfull = 0;
     end
 end
+
 always @(posedge clk)begin
     if(rst)begin
         used <= 16'b0;
