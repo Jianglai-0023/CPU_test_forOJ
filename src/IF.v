@@ -94,7 +94,7 @@ reg     is_stall;
    reg [31 :0] debug = 0; 
     always @(posedge clk)begin //接受icache并修改自己的pc
        
-        debug <= debug + 1;
+        // debug <= debug + 1;
         // $display("%d",debug); 
         if(rst)begin
             

@@ -219,7 +219,7 @@ always @(posedge clk) begin//考虑ROB is full
              rear <= -(~rear); 
              is_pc[rear] <= 0;
             end 
-            if(rear == front && !is_commited[rear])is_full <= 1;
+            if(front==-(~rear) && !is_ready[front])is_full <= 1;
             else is_full <= 0;
         end  
         else begin

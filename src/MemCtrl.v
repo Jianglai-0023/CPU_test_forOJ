@@ -42,10 +42,10 @@ initial begin
     // mem_a = 32'b0;
 end
 always @(*) begin
-    if(cannot_read)begin 
-        is_write = `False;
-    end
-    else if(!rdy)begin
+    // if(cannot_read)begin 
+    //     is_write = `False;
+    // end
+    if(!rdy)begin
         is_write = `False;
     end
     else if(rst)begin
@@ -53,100 +53,100 @@ always @(*) begin
     end
     else begin
         case(opcode)
-        `LB:lsb_val_out = {{24{mem_result[7]}},mem_result};
-        `LH:lsb_val_out = {{16{mem_result[7]}},mem_result,lsb_val[7:0]};
-        `LW:lsb_val_out = {mem_result,lsb_val[23 : 0]};
-        `LBU:lsb_val_out = {24'b0,mem_result};
-        `LHU:lsb_val_out = {8'b0,mem_result,lsb_val[15:0]};
-         default:lsb_val_out = 32'b0;
+            `LB:lsb_val_out = {{24{mem_result[7]}},mem_result};
+            `LH:lsb_val_out = {{16{mem_result[7]}},mem_result,lsb_val[7:0]};
+            `LW:lsb_val_out = {mem_result,lsb_val[23 : 0]};
+            `LBU:lsb_val_out = {24'b0,mem_result};
+            `LHU:lsb_val_out = {8'b0,mem_result,lsb_val[15:0]};
+        default:lsb_val_out = 32'b0;
         endcase
     //    ic_val_out = {mem_result,ic_val[23:0]}; 
         if(lsb_flag && !ic_is_in && !lsb_isok)begin
-        case(opcode)
-        `LB:begin
-            mem_a = lsb_addr;
-            is_write = `False;
-        end
-        `LH:begin 
-            mem_a = lsb_addr + {31'b0,lsb_onestp};
-            is_write = `False;
-        end
-        `LW:begin
-            mem_a = lsb_addr + {30'b0,lsb_stp};
-            is_write = `False;
-        end
-        `LBU:begin
-            mem_a = lsb_addr;
-            is_write = `False;
-        end
-        `LHU:begin
-            mem_a = lsb_addr + {31'b0,lsb_onestp};
-            is_write = `False;
-        end
-        `SB:begin
-            if(lsb_addr==32'h30000)begin
-                // $display("%s","###");
-                // $display("%d",lsb_store[7 : 0]);
-                // is_write = `False;
-                mem_a = lsb_addr;
-            mem_write = lsb_store[7 : 0];
-            is_write = `True;
-            end
-            else begin
-            mem_a = lsb_addr;
-            mem_write = lsb_store[7 : 0];
-            is_write = `True;
-            end
-            
-        end
-        `SH:begin
-            mem_a = lsb_addr + {31'b0,lsb_onestp};
-            case(lsb_onestp)
-            1'b0:begin
-                mem_write = lsb_store[7 : 0];
-                is_write = `True;
-            end
-            1'b1:begin
-                mem_write = lsb_store[15 : 8];
-                is_write = `True;
-            end
+            case(opcode)
+                `LB:begin
+                    mem_a = lsb_addr;
+                    is_write = `False;
+                end
+                `LH:begin 
+                    mem_a = lsb_addr + {31'b0,lsb_onestp};
+                    is_write = `False;
+                end
+                `LW:begin
+                    mem_a = lsb_addr + {30'b0,lsb_stp};
+                    is_write = `False;
+                end
+                `LBU:begin
+                    mem_a = lsb_addr;
+                    is_write = `False;
+                end
+                `LHU:begin
+                    mem_a = lsb_addr + {31'b0,lsb_onestp};
+                    is_write = `False;
+                end
+                `SB:begin
+                    if(lsb_addr==32'h30000)begin
+                        // $display("%s","###");
+                        // $display("%d",lsb_store[7 : 0]);
+                        // is_write = `False;
+                        mem_a = lsb_addr;
+                        mem_write = lsb_store[7 : 0];
+                        is_write = `True;
+                    end
+                    else begin
+                        mem_a = lsb_addr;
+                        mem_write = lsb_store[7 : 0];
+                        is_write = `True;
+                    end
+
+                end
+                `SH:begin
+                    mem_a = lsb_addr + {31'b0,lsb_onestp};
+                    case(lsb_onestp)
+                    1'b0:begin
+                        mem_write = lsb_store[7 : 0];
+                        is_write = `True;
+                    end
+                    1'b1:begin
+                        mem_write = lsb_store[15 : 8];
+                        is_write = `True;
+                    end
+                    endcase
+                end 
+                `SW:begin
+                    mem_a = lsb_addr + {30'b0,lsb_stp};
+                    case(lsb_stp)
+                    2'b00:begin
+                        mem_write = lsb_store[7 : 0];
+                        is_write = `True;
+                    end
+                    2'b01:begin
+                        mem_write = lsb_store[15 : 8];
+                        is_write = `True;
+                    end
+                    2'b10:begin
+                        mem_write = lsb_store[23 : 16];
+                        is_write = `True;
+                    end
+                    2'b11:begin
+                        mem_write = lsb_store[31 : 24];
+                        is_write = `True; 
+                    end
+                    endcase
+                end
+                default:begin
+                    is_write = `False;
+                    mem_a = 32'b0;
+                end
             endcase
-        end 
-        `SW:begin
-            mem_a = lsb_addr + {29'b0,lsb_stp};
-            case(lsb_stp)
-            2'b00:begin
-                mem_write = lsb_store[7 : 0];
-                is_write = `True;
-            end
-            2'b01:begin
-                mem_write = lsb_store[15 : 8];
-                is_write = `True;
-            end
-            2'b10:begin
-                mem_write = lsb_store[23 : 16];
-                is_write = `True;
-            end
-            2'b11:begin
-                mem_write = lsb_store[31 : 24];
-                is_write = `True; 
-            end
-            endcase
-        end
-        default:begin
-            is_write = `False;
-            mem_a = 32'b0;
-        end
-        endcase
        end
        else if(ic_flag )begin
-        is_write = `False;
-        mem_a = addr_target + {30'b0,if_stp}; 
-        ic_val_out = {mem_result,ic_val[23 : 0]};
+            is_write = `False;
+            mem_a = addr_target + {30'b0,if_stp}; 
+            ic_val_out = {mem_result,ic_val[23 : 0]};
        end
        else begin
-        is_write = `False;
-        mem_a = 32'b0;
+            is_write = `False;
+            mem_a = 32'b0;
        end
     end
 end
@@ -167,8 +167,8 @@ always @(posedge clk) begin
     end
     else if(lsb_isok)lsb_isok<=`False;
     else begin
-        if(cannot_read)begin end
-        else begin 
+        // if(cannot_read)begin end
+        // else begin 
             if(ic_isok)ic_is_in<=0;
             else ;
             if(lsb_flag && !ic_is_in)begin
@@ -293,7 +293,7 @@ always @(posedge clk) begin
                 ic_isok <= `False;
                 ic_is_in <= 0;
             end 
-        end
+        // end
     end
 end
     // end

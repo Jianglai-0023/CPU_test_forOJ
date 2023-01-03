@@ -32,7 +32,7 @@ assign op = opcode;
         `SLLI:ans = val1 << val2[4:0]; 
         `SRL :ans = val1 >> val2[4:0]; 
         `SRLI:ans = val1 >> val2[4:0];  
-        `SRA :ans = $signed(val1) >> val2; 
+        `SRA :ans = $signed(val1) >> val2[4 : 0]; 
         `SRAI:ans = $signed(val1) >> val2[4:0]; 
         `SLTI:ans = $signed(val1) < $signed(val2); 
         `SLT :ans = $signed(val1) < $signed(val2); 
@@ -46,7 +46,12 @@ assign op = opcode;
             // $display("%b",val1);
             // $display("%b",val2);
         end
-        `BGE :ans = $signed(val1) >= $signed(val2); 
+        `BGE :begin
+            ans = $signed(val1) >= $signed(val2); 
+        //    $display("%s","BGE");
+        //     $display("%b",val1);
+        //     $display("%b",val2); 
+        end
         `BLTU:begin
              ans = val1 < val2; 
             // $display("%s","BLTU");
