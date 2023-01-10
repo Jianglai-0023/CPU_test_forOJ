@@ -25,10 +25,7 @@ assign rs2_val = (rs2==0) ? 0 : (reg_state[rs2] ? reg_val[rs2] : {28'b0,ROB_pos[
 
 always @(*) begin
     if(rst)begin
-    for(i = 0; i < 32; i = i+1)begin
-        reg_val[i] = 32'b0;
-        ROB_pos[i] = 4'b0;
-    end
+    
     end
     else ;
 end
@@ -36,6 +33,10 @@ always @(posedge clk) begin
     // $display("%s","UOOU");
     // $display("%d",reg_val[2]);
     if(rst)begin
+        for(i = 0; i < 32; i = i+1)begin
+        reg_val[i] = 32'b0;
+        ROB_pos[i] = 4'b0;
+    end
         reg_state <= ~(`null32);
             for (i = 0; i < 32; i = i + 1)begin
                 reg_val[i] <= `null32; 
