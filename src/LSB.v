@@ -48,10 +48,10 @@ always @(*) begin
     if(rst)begin
         for(i = 0; i < 16;i = i+1)begin
             ins[i] =6'b0;
-            imm_val[i] = 32'b0;
+            
             rs1_val[i] = 32'b0;
             rs2_val[i] = 32'b0;
-            ROB_idx[i] = 4'b0;
+            
         end
        full = 0;
     end
@@ -65,6 +65,10 @@ always @(*) begin
 end
 always @(posedge clk) begin//接受信息，将指令加入lsb
     if(rst)begin
+        for(i = 0; i < 16; i=i+1)begin
+            ROB_idx[i] <= 4'b0;
+            imm_val[i] = 32'b0;
+        end
         tomem_flag <= 0;
         is_commit <= 16'b1111111111111111;
         // full <= 0;
