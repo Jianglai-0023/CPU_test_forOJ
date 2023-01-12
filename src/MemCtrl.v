@@ -49,7 +49,7 @@ always @(*) begin
         ic_val_out = 32'b0;
         lsb_val_out = 32'b0;
     end
-    if(!rdy)begin
+    else if(!rdy)begin
         is_write = `False;
         mem_a = 32'b0;
         mem_write = 8'b0;
