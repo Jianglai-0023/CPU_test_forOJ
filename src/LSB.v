@@ -49,9 +49,11 @@ always @(*) begin
        
        full = 0;
     end
-    else if(!rdy);
+    else if(!rdy)begin
+        full = 0;
+    end
     else begin
-        if(is_commit==32'b0)begin
+        if(is_commit==16'b0)begin
             full = 1;
         end
         else full = 0;

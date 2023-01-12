@@ -38,15 +38,21 @@ reg     is_stall;
     //calculate imm
     always @(*)begin//向decode输出结果
         //修改输出的bc
-        ins_imm = 32'b0;
+        
         if(rst)begin
             ins_flag = 0;
+            ins_imm = 32'b0;
+            rd_val = 32'b0;
         end
         else if(!rdy)begin
-            
+           ins_flag = 0;
+           ins_imm = 32'b0;
+           rd_val = 32'b0;
         end
         else if(jp_ok)begin
-            // ins_flag = `True;·
+            ins_flag = 0;
+            ins_imm = 32'b0;
+            rd_val = 32'b0;
         end
         else if(ins_ori_flag&&!is_stall&&!lsb_full && !rob_full && !rs_full)begin
             ins_flag = ins_ori_flag;
@@ -70,14 +76,18 @@ reg     is_stall;
                 end 
                 `BRANCHOP: begin 
                     ins_imm = {{20{ins_ori[31]}}, ins_ori[7], ins_ori[30:25], ins_ori[11:8]} << 1;
+                    rd_val = 32'b0;
                 end
                 `ITYPEOP:begin
                     ins_imm = {{20{ins_ori[31]}},ins_ori[31 : 20]};
+                    rd_val = 32'b0;
                 end
                 `STYPEOP:begin
                     ins_imm={{20{ins_ori[31]}},ins_ori[31 : 25],ins_ori[11:7]};
+                    rd_val = 32'b0;
                 end
                 `ADDIOP:begin
+                    rd_val = 32'b0;
                     case(ins_ori[14 : 12])
                     3'b001:ins_imm={27'b0,ins_ori[24 : 20]};
                     3'b101:ins_imm={27'b0,ins_ori[24 : 20]};
@@ -85,10 +95,17 @@ reg     is_stall;
                     endcase
                     
                 end
-                default: ins_imm = 32'b0; //branch
+                default:begin
+                    ins_imm = 32'b0; //branch
+                    rd_val = 32'b0;
+                end 
             endcase
         end 
-        else ins_flag = `False;
+        else begin
+            ins_imm = 32'b0;
+            rd_val = 32'b0;
+            ins_flag = `False;
+        end 
     
     end
    reg [31 :0] debug = 0; 
@@ -97,7 +114,6 @@ reg     is_stall;
         // debug <= debug + 1;
         // $display("%d",debug); 
         if(rst)begin
-            
             is_stall <= 0;
             pc_cache <= 32'b0;
         end

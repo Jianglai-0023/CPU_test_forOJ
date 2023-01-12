@@ -42,14 +42,22 @@ initial begin
     // mem_a = 32'b0;
 end
 always @(*) begin
-    if(cannot_read)begin 
-        is_write = `False;
-    end
+    // if(cannot_read)begin 
+    //     is_write = `False;
+    // end
     if(!rdy)begin
         is_write = `False;
+        mem_a = 32'b0;
+        mem_write = 8'b0;
+        ic_val_out = 32'b0;
+        lsb_val_out = 32'b0;
     end
     else if(rst)begin
         is_write = `False;
+        mem_a = 32'b0;
+        mem_write = 8'b0;
+        ic_val_out = 32'b0;
+        lsb_val_out = 32'b0;
     end
     else begin
         case(opcode)
@@ -62,26 +70,32 @@ always @(*) begin
         endcase
     //    ic_val_out = {mem_result,ic_val[23:0]}; 
         if(lsb_flag && !ic_is_in && !lsb_isok)begin
+            ic_val_out = 32'b0;
             case(opcode)
                 `LB:begin
                     mem_a = lsb_addr;
                     is_write = `False;
+                    mem_write = 8'b0;
                 end
                 `LH:begin 
                     mem_a = lsb_addr + {31'b0,lsb_onestp};
                     is_write = `False;
+                    mem_write = 8'b0;
                 end
                 `LW:begin
                     mem_a = lsb_addr + {30'b0,lsb_stp};
                     is_write = `False;
+                    mem_write = 8'b0;
                 end
                 `LBU:begin
                     mem_a = lsb_addr;
                     is_write = `False;
+                    mem_write = 8'b0;
                 end
                 `LHU:begin
                     mem_a = lsb_addr + {31'b0,lsb_onestp};
                     is_write = `False;
+                    mem_write = 8'b0;
                 end
                 `SB:begin
                     if(lsb_addr==32'h30000)begin
@@ -136,6 +150,7 @@ always @(*) begin
                 default:begin
                     is_write = `False;
                     mem_a = 32'b0;
+                    mem_write = 8'b0;
                 end
             endcase
        end
@@ -143,10 +158,13 @@ always @(*) begin
             is_write = `False;
             mem_a = addr_target + {30'b0,if_stp}; 
             ic_val_out = {mem_result,ic_val[23 : 0]};
+            mem_write = 8'b0;
        end
        else begin
+            ic_val_out = 32'b0;
             is_write = `False;
             mem_a = 32'b0;
+            mem_write = 8'b0;
        end
     end
 end
@@ -167,8 +185,8 @@ always @(posedge clk) begin
     end
     else if(lsb_isok)lsb_isok<=`False;
     else begin
-        if(cannot_read)begin end
-        else begin 
+        // if(cannot_read)begin end
+        // else begin 
             if(ic_isok)ic_is_in<=0;
             else ;
             if(lsb_flag && !ic_is_in)begin
@@ -293,7 +311,7 @@ always @(posedge clk) begin
                 ic_isok <= `False;
                 ic_is_in <= 0;
             end 
-        end
+        // end
     end
 end
     // end

@@ -82,11 +82,12 @@ module ROB(
   assign ophead = de_ophead;
 always @(*) begin
     if(rst)begin
-   
-    rd_in_fg = `False;
+      reorder_rear = rear; 
+      rd_in_fg = `False;
     end
     else if(!rdy)begin
-      
+      reorder_rear = rear;
+      rd_in_fg = `False;
     end
     else begin
       reorder_rear = rear;
@@ -96,7 +97,7 @@ always @(*) begin
           is_val2 = 1;
         end
         `AUIPCOP:begin
-         is_val1 = 1;
+          is_val1 = 1;
           is_val2 = 1; 
         end
         `JALOP:begin
@@ -145,18 +146,25 @@ always @(*) begin
         if(flag)begin
           if(ophead==`STYPEOP || ophead == `BRANCHOP)begin
             rd_in_fg = `False;
+            rd_idxin_update = 5'b0;
           end
           else begin
             rd_in_fg = `True;
             rd_idxin_update = rd_idx; 
           end
         end
-        else rd_in_fg = `False;
+        else begin
+          rd_in_fg = `False;
+          rd_idxin_update = 5'b0;
+        end
       end
-      else rd_in_fg = `False;
-end
+      else begin
+        rd_in_fg = `False;
+        rd_idxin_update = 5'b0;
+      end
+    end
    
-  end
+end
 always @(posedge clk) begin//考虑ROB is full
   if(rst)begin
      for(i = 0; i < 16; i=i+1)begin

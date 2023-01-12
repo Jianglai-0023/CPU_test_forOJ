@@ -28,10 +28,20 @@ assign rob_rd_val = rd_val;
 //for op code
 always @(*)begin
     if(rst)begin
-        
+       opcode = 6'b0;
+       imm = 32'b0;
+       rs1 = 5'b0;
+       rs2 = 5'b0;
+       rd =  5'b0;
+       ophead = 7'b0;
     end
     else if(!rdy)begin
-        
+       opcode = 6'b0; 
+       imm = 32'b0;
+       rs1 = 5'b0;
+       rs2 = 5'b0;
+       rd =  5'b0;
+       ophead = 7'b0;
     end
     else begin
         if(ins_flag)begin

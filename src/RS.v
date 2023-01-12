@@ -50,7 +50,7 @@ always @(*) begin
        
     end
     else if(!rdy)begin
-       
+      isfull = 0; 
     end
 
     else begin
