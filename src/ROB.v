@@ -88,6 +88,7 @@ always @(*) begin
           rs2_val_ = 32'b0;
           is_val1 = 0;
           is_val2 = 0;
+          rd_idxin_update = 5'b0;
     end
     else if(!rdy)begin
       reorder_rear = rear;
@@ -96,6 +97,7 @@ always @(*) begin
       rs2_val_ = 32'b0;
       is_val1 = 0;
       is_val2 = 0; 
+      rd_idxin_update = 5'b0;
     end
     else begin
       reorder_rear = rear;
