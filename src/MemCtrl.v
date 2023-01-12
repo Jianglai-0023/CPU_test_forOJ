@@ -42,9 +42,13 @@ initial begin
     // mem_a = 32'b0;
 end
 always @(*) begin
-    // if(cannot_read)begin 
-    //     is_write = `False;
-    // end
+    if(cannot_read)begin 
+        is_write = `False;
+        mem_a = 32'b0;
+        mem_write = 8'b0;
+        ic_val_out = 32'b0;
+        lsb_val_out = 32'b0;
+    end
     if(!rdy)begin
         is_write = `False;
         mem_a = 32'b0;
@@ -185,8 +189,10 @@ always @(posedge clk) begin
     end
     else if(lsb_isok)lsb_isok<=`False;
     else begin
-        // if(cannot_read)begin end
-        // else begin 
+        if(cannot_read)begin
+            // ic_is_in <= 1;
+        end
+        else begin 
             if(ic_isok)ic_is_in<=0;
             else ;
             if(lsb_flag && !ic_is_in)begin
@@ -311,7 +317,7 @@ always @(posedge clk) begin
                 ic_isok <= `False;
                 ic_is_in <= 0;
             end 
-        // end
+        end
     end
 end
     // end
