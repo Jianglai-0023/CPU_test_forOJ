@@ -84,10 +84,18 @@ always @(*) begin
     if(rst)begin
       reorder_rear = rear; 
       rd_in_fg = `False;
+      rs1_val_ = 32'b0;
+          rs2_val_ = 32'b0;
+          is_val1 = 0;
+          is_val2 = 0;
     end
     else if(!rdy)begin
       reorder_rear = rear;
       rd_in_fg = `False;
+      rs1_val_ = 32'b0;
+      rs2_val_ = 32'b0;
+      is_val1 = 0;
+      is_val2 = 0; 
     end
     else begin
       reorder_rear = rear;
@@ -95,14 +103,20 @@ always @(*) begin
         `LUIOP:begin
           is_val1 = 1;
           is_val2 = 1;
+          rs1_val_ = 32'b0;
+          rs2_val_ = 32'b0;
         end
         `AUIPCOP:begin
           is_val1 = 1;
           is_val2 = 1; 
+          rs1_val_ = 32'b0;
+          rs2_val_ = 32'b0;
         end
         `JALOP:begin
           is_val1 = 1;
           is_val2 = 1;
+          rs1_val_ = 32'b0;
+          rs2_val_ = 32'b0;
         end
         `JALROP:begin
          is_val1 = rs1_ready ? rs1_ready : (is_ready[rs1_val] ? is_ready[rs1_val] : ((alu_flag && {28'b0,rob_reorder}==rs1_val) ? 1 : lsb_flag && {28'b0,lsb_reorder}==rs1_val));
@@ -140,7 +154,12 @@ always @(*) begin
          rs1_val_ =is_val1 ? (rs1_ready ? rs1_val:(is_ready[rs1_val] ? val[rs1_val] : ((alu_flag&&{28'b0,rob_reorder}==rs1_val)? alu_val : lsb_val))) : rs1_val; 
          rs2_val_ =is_val2 ? (rs2_ready ? rs2_val:(is_ready[rs2_val] ? val[rs2_val] : ((alu_flag&&{28'b0,rob_reorder}==rs2_val)? alu_val : lsb_val))) : rs2_val;        
         end
-        default:;
+        default: begin 
+          is_val1 = 0;
+          is_val2 = 0;
+          rs1_val_ = 32'b0;
+          rs2_val_ = 32'b0;
+        end
       endcase
       if(!is_full)begin
         if(flag)begin

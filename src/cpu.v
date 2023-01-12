@@ -342,7 +342,8 @@ LSB LSB(
   //CDB alu
   .alu_reorder(alu_CDB_reorder),
   .alu_val(alu_CDB_val),
-  .alu_flag(alu_CDB_flag)
+  .alu_flag(alu_CDB_flag),
+  .alu_op(alu_CDB_op)
  );
 
 

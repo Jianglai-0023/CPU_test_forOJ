@@ -90,7 +90,7 @@ initial begin
   for (i=0;i<2**ADDR_WIDTH;i=i+1) begin
     ram[i] = 0;
   end
-  $readmemh("/Users/jianglai/Desktop/CPU_Azure/riscv/testcase/sim/007_hanoi.data", ram); // add test.data to vivado project or specify a valid file path
+  $readmemh("test.data", ram); // add test.data to vivado project or specify a valid file path
 end
 //
 endmodule
