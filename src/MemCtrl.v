@@ -177,7 +177,10 @@ always @(*) begin
 end
 
 always @(posedge clk) begin
-    if(!rdy)begin
+    if(cannot_read && is_IO)begin
+        
+    end
+    else if(!rdy)begin
     
     end
     else if(rst)begin
@@ -192,10 +195,8 @@ always @(posedge clk) begin
     end
     else if(lsb_isok)lsb_isok<=`False;
     else begin
-        if(cannot_read && is_IO)begin
-            // ic_is_in <= 1;
-        end
-        else begin 
+        
+         
             if(ic_isok)ic_is_in<=0;
             else ;
             if(lsb_flag && !ic_is_in)begin
@@ -320,7 +321,7 @@ always @(posedge clk) begin
                 ic_isok <= `False;
                 ic_is_in <= 0;
             end 
-        end
+        
     end
 end
     // end
