@@ -189,11 +189,11 @@ end
 always @(posedge clk) begin//考虑ROB is full
   if(rst)begin
      for(i = 0; i < 16; i=i+1)begin
-      val[i] = 32'b0;
-      op[i] = 6'b0;
-      rd_addr[i] = 5'b0;
-      pc_num[i] = 32'b0;
-      is_pc[i] = 0;
+      val[i] <= 32'b0;
+      op[i] <= 6'b0;
+      rd_addr[i] <= 5'b0;
+      pc_num[i] <= 32'b0;
+      is_pc[i] <= 0;
     end
     rd_out_fg <= `False;
     // rd_in_fg <= `False;

@@ -66,10 +66,10 @@ always @(posedge clk)begin
         val2_ready <= 16'b0;
         flag_alu <= 0;
          for(i = 0; i < 16; i = i+1)begin
-            ins[i] = 6'b0;
-            val1[i] = 32'b0;
-            val2[i] = 32'b0;
-            ROB_idx[i] = 4'b0;
+            ins[i] <= 6'b0;
+            val1[i] <= 32'b0;
+            val2[i] <= 32'b0;
+            ROB_idx[i] <= 4'b0;
         end        
     end
     else if(!rdy)begin
