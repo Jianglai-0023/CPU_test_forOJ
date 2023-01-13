@@ -29,6 +29,9 @@ reg       lsb_onestp;
 reg [31 : 0] ic_val;
 reg  [31 : 0] lsb_val;
 reg           ic_is_in;
+
+wire is_IO = lsb_addr[17 : 16]==2'b11;
+
 initial begin
     if_stp = 2'b0;
     lsb_stp = 2'b0;
@@ -42,7 +45,7 @@ initial begin
     // mem_a = 32'b0;
 end
 always @(*) begin
-    if(cannot_read)begin 
+    if(cannot_read && is_IO)begin 
         is_write = `False;
         mem_a = 32'b0;
         mem_write = 8'b0;
@@ -189,7 +192,7 @@ always @(posedge clk) begin
     end
     else if(lsb_isok)lsb_isok<=`False;
     else begin
-        if(cannot_read)begin
+        if(cannot_read && is_IO)begin
             // ic_is_in <= 1;
         end
         else begin 
