@@ -34,8 +34,8 @@ always @(posedge clk) begin
     // $display("%d",reg_val[2]);
     if(rst)begin
         for(i = 0; i < 32; i = i+1)begin
-        reg_val[i] = 32'b0;
-        ROB_pos[i] = 4'b0;
+        reg_val[i] <= 32'b0;
+        ROB_pos[i] <= 4'b0;
     end
         reg_state <= ~(`null32);
             for (i = 0; i < 32; i = i + 1)begin
