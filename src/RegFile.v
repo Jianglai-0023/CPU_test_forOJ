@@ -23,12 +23,7 @@ assign rs2_ready = (rs2==0) ? 1 : reg_state[rs2];
 assign rs1_val = (rs1==0) ? 0 : (reg_state[rs1] ?  reg_val[rs1] : {28'b0,ROB_pos[rs1]});
 assign rs2_val = (rs2==0) ? 0 : (reg_state[rs2] ? reg_val[rs2] : {28'b0,ROB_pos[rs2]});
 
-always @(*) begin
-    if(rst)begin
-    
-    end
-    else ;
-end
+
 always @(posedge clk) begin
     // $display("%s","UOOU");
     // $display("%d",reg_val[2]);
@@ -51,6 +46,10 @@ always @(posedge clk) begin
                 
             end
             else begin
+                // if(rd_out_a==10)begin
+                //         $display("%s","REG");
+                //         $display("%b",rd_out_val);
+                //     end
                 reg_val[rd_in_a] <= rd_out_val;
                 reg_state[rd_in_a] <= 0;
                 ROB_pos[rd_in_a] <= rd_in_rob; 
@@ -62,8 +61,8 @@ always @(posedge clk) begin
 
                 end
                 else begin
-                    // if(rd_out_a==11)begin
-                    //     $display("%s","REG-ONE");
+                    // if(rd_out_a==10)begin
+                    //     $display("%s","REG");
                     //     $display("%b",rd_out_val);
                     // end
                     // else if(rd_out_a==12)begin
@@ -80,9 +79,9 @@ always @(posedge clk) begin
                 //    $display("%x",rd_out_val); 
                 end
                 else begin
-                    // if(rd_out_a==15)begin
+                    // if(rd_out_a==10)begin
                     //     $display("%s","REG");
-                    //     $display("%d",rd_out_val);
+                    //     $display("%b",rd_out_val);
                     // end
                     // else if(rd_out_a==14)begin
                     //     $display("%s","REGTWO");

@@ -91,6 +91,7 @@ always @(*) begin
           rd_idxin_update = 5'b0;
     end
     else if(!rdy)begin
+      $display("%s","ISRDY");
       reorder_rear = rear;
       rd_in_fg = `False;
       rs1_val_ = 32'b0;
@@ -208,8 +209,9 @@ always @(posedge clk) begin//考虑ROB is full
   else if(!rdy)begin
     
   end
-  else if(!is_full)begin
-        if(flag)begin//加入新的opt 不放入store指令
+  else begin
+    if(!is_full)begin
+       if(flag)begin//加入新的opt 不放入store指令
             is_commited[rear] <= `False;
             rd_addr[rear] <= rd_idx;
             val[rear] <= rd_val;
@@ -236,7 +238,6 @@ always @(posedge clk) begin//考虑ROB is full
             else begin
               is_ready[rear]  <= `False;//must be changed by alu or lsb
             end
-
             
             if(ophead == `BRANCHOP || ophead == `JALROP)begin
               pc_num[rear] <= de_imm; 
@@ -249,6 +250,7 @@ always @(posedge clk) begin//考虑ROB is full
              rear <= -(~rear); 
              is_pc[rear] <= 0;
             end 
+
             if(front==-(~rear) && !is_ready[front])is_full <= 1;
             else is_full <= 0;
         end  
@@ -256,14 +258,8 @@ always @(posedge clk) begin//考虑ROB is full
           // op_is_come <= `False;
           // rd_in_fg <= `False;
         end  
-  end
-  else begin
-    // op_is_come<=`False;
-    // rd_in_fg <= `False;
-  end
- 
- 
-  if((front != rear || !is_commited[front]) && is_ready[front])begin//可以发射指令:非空 & ready
+    end
+       if((front != rear || !is_commited[front]) && is_ready[front])begin//可以发射指令:非空 & ready
         front <= -(~front);
         is_commited[front] <= `True;
         // val[front] <= 32'b0;
@@ -295,7 +291,7 @@ always @(posedge clk) begin//考虑ROB is full
   if(alu_flag)begin//更新ready
         if(alu_opcode==`LB||alu_opcode==`LH||alu_opcode==`LW||alu_opcode==`LBU||alu_opcode==`LHU||alu_opcode == `SB || alu_opcode == `SH || alu_opcode==`SW)begin
         end
-        else begin
+        else if(is_ready[rob_reorder]==0)begin
           if(alu_opcode==`JALR)begin
             pc_num[rob_reorder] <= alu_val;
             // $display("%s","JALR");
@@ -309,13 +305,18 @@ always @(posedge clk) begin//考虑ROB is full
   else ;
 
   if(lsb_flag)begin
-      if(lsb_op==`LB||lsb_op==`LH||lsb_op==`LW||lsb_op==`LBU||lsb_op==`LHU)begin
+      if((lsb_op==`LB||lsb_op==`LH||lsb_op==`LW||lsb_op==`LBU||lsb_op==`LHU) && is_ready[lsb_reorder]==0)begin
         val[lsb_reorder] <= lsb_val;
         is_ready[lsb_reorder] <= 1;
       end
       else ;
   end
   else;
+  end
+
+ 
+ 
+  
 end
   
   

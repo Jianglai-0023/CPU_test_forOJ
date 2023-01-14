@@ -29,6 +29,7 @@ reg       lsb_onestp;
 reg [31 : 0] ic_val;
 reg  [31 : 0] lsb_val;
 reg           ic_is_in;
+reg           lsb_is_in;
 
 wire is_IO = lsb_addr[17 : 16]==2'b11;
 
@@ -42,6 +43,7 @@ initial begin
     lsb_isok = 0;
     is_write = 0;
     ic_is_in = 0;
+    lsb_is_in = 0;
     // mem_a = 32'b0;
 end
 always @(*) begin
@@ -199,17 +201,23 @@ always @(posedge clk) begin
          
             if(ic_isok)ic_is_in<=0;
             else ;
-            if(lsb_flag && !ic_is_in)begin
+            if(lsb_isok)lsb_is_in <= 0;
+            else if(lsb_flag && !ic_is_in)begin
                 ic_isok <= `False;
                 case(opcode)
                 `LB:begin
                         lsb_isok <= 1;
+                        lsb_is_in <= 1;
                 end
                 `LH:begin
                     lsb_onestp <= -(~lsb_onestp);
                     case(lsb_onestp)
-                        1'b0:ic_isok <= 0;
+                        1'b0:begin
+                            ic_isok <= 0;
+                            lsb_is_in <= 1;
+                        end
                         1'b1:begin
+                            lsb_is_in <= 1;
                             lsb_isok <= 1;
                             lsb_val[7:0] <= mem_result;
                         end
@@ -219,14 +227,17 @@ always @(posedge clk) begin
                     lsb_stp <= -(~lsb_stp);
                     case(lsb_stp)
                         2'b01:begin
+                            lsb_is_in <= 1;
                             lsb_val[7:0] <= mem_result;
                             lsb_isok <= 0;
                         end
                         2'b10:begin
+                            lsb_is_in <= 1;
                             lsb_val[15:8] <= mem_result;
                             lsb_isok <= 0;
                         end
                         2'b11:begin
+                            lsb_is_in <= 1;
                             lsb_val[23:16] <= mem_result;
                             lsb_isok <= 1;
                         end

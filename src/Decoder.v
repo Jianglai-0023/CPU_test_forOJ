@@ -27,23 +27,7 @@ assign rob_rd_val = rd_val;
 // assign if_stall = rob_full|lsb_full|((ins[6:0]==7'b1100111|ins[6:0]==7'b1100011)&!bc_out);//every branch
 //for op code
 always @(*)begin
-    if(rst)begin
-       opcode = 6'b0;
-       imm = 32'b0;
-       rs1 = 5'b0;
-       rs2 = 5'b0;
-       rd =  5'b0;
-       ophead = 7'b0;
-    end
-    else if(!rdy)begin
-       opcode = 6'b0; 
-       imm = 32'b0;
-       rs1 = 5'b0;
-       rs2 = 5'b0;
-       rd =  5'b0;
-       ophead = 7'b0;
-    end
-    else begin
+   
         if(ins_flag)begin
             imm = ins_imm;
             rs1 = ins[19:15];
@@ -140,7 +124,6 @@ always @(*)begin
        rd =  5'b0;
        ophead = 7'b0; 
         end
-    end
    
 end
 

@@ -46,11 +46,16 @@ assign isfull = full;
 assign flag = !mem_ok & tomem_flag;
 always @(*) begin
     if(rst)begin
-       
-       full = 0;
+        if(is_commit==16'b0)begin
+            full = 1;
+        end
+        else full = 0;
     end
     else if(!rdy)begin
-        full = 0;
+        if(is_commit==16'b0)begin
+            full = 1;
+        end
+        else full = 0;
     end
     else begin
         if(is_commit==16'b0)begin
@@ -80,8 +85,9 @@ always @(posedge clk) begin//接受信息，将指令加入lsb
     else if(!rdy)begin
         
     end
-    else if(!full&&op_flag)begin//加入信息
-        case(ophead)
+    else begin//加入信息
+        if(!full&&op_flag)begin
+            case(ophead)
             `JALROP:begin
                 ins[rear] <= opcode;
                 imm_val[rear] <= imm;
@@ -122,21 +128,8 @@ always @(posedge clk) begin//接受信息，将指令加入lsb
             end
             default:;
         endcase
-        // if(ophead==`JALROP || ophead == `BRANCHOP || ophead == `ITYPEOP || ophead == `STYPEOP)begin
-        //     if(front==-(~rear) && rs1_ready[front] && rs2_ready[front])begin//rear
-        //         if(ins[front]==`JALR || ins[front]==`BEQ||ins[front]==`BNE||ins[front]==`BLT||ins[front]==`BGE||ins[front]==`BLTU||ins[front]==`BGEU)begin
-        //             full <= `False;
-        //         end
-        //         else if(mem_ok)begin
-        //             full <= `False;
-        //         end
-        //         else full <= `False;
-        //     end
-        // end
-    end
-    
-    
-    if(front != rear || (front == rear && is_commit[front] == `False))begin//push front
+        end
+         if(front != rear || (front == rear && is_commit[front] == `False))begin//push front
         if(rs1_ready[front]&&rs2_ready[front])begin
             if(ins[front]==`JALR || ins[front]==`BEQ||ins[front]==`BNE||ins[front]==`BLT||ins[front]==`BGE||ins[front]==`BLTU||ins[front]==`BGEU)begin
                 is_commit[front] <= `True;
@@ -358,5 +351,20 @@ always @(posedge clk) begin//接受信息，将指令加入lsb
         end 
     end
     else;
+        // if(ophead==`JALROP || ophead == `BRANCHOP || ophead == `ITYPEOP || ophead == `STYPEOP)begin
+        //     if(front==-(~rear) && rs1_ready[front] && rs2_ready[front])begin//rear
+        //         if(ins[front]==`JALR || ins[front]==`BEQ||ins[front]==`BNE||ins[front]==`BLT||ins[front]==`BGE||ins[front]==`BLTU||ins[front]==`BGEU)begin
+        //             full <= `False;
+        //         end
+        //         else if(mem_ok)begin
+        //             full <= `False;
+        //         end
+        //         else full <= `False;
+        //     end
+        // end
+    end
+    
+    
+   
 end
 endmodule

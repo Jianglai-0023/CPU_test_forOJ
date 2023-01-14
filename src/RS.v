@@ -46,11 +46,12 @@ module RS(
 
 always @(*) begin
     if(rst)begin
-        isfull = 0;
-       
+       if(used==~(16'b0))isfull = 1;
+        else isfull = 0;
     end
     else if(!rdy)begin
-      isfull = 0; 
+      if(used==~(16'b0))isfull = 1;
+        else isfull = 0;
     end
 
     else begin
@@ -74,10 +75,11 @@ always @(posedge clk)begin
     end
     else if(!rdy)begin
         // $display("%s","RDY appear");
-         flag_alu <= `False;
+        //  flag_alu <= `False;
     end
-    else if(opflag)begin//加入新的op
-        begin:loop
+    else begin//加入新的op
+        if(opflag)begin
+            begin:loop
             for(i = 0; i < `RSSIZE; i = i + 1)begin//考虑RS is full的情况
                 if(!used[i])begin
                     ins[i]<=opcode;
@@ -134,11 +136,9 @@ always @(posedge clk)begin
             end
             // if(i== `RSSIZE) isfull <= 1;
             // else isfull <= 0; 
+            end
         end
-    end
-    else ;
-    
-    if(lsb_flag)begin
+         if(lsb_flag)begin
        for(i = 0; i < `RSSIZE; i = i + 1)begin
                 // $display("%d",i);
                 // $display("%d",val2[0]);
@@ -193,6 +193,10 @@ always @(posedge clk)begin
         // $display("%s","CRYCRY");
     end
     else ;
+    end
+    
+    
+   
 end
 
                     

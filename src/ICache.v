@@ -31,29 +31,7 @@ assign pc_mem = pc;
 // initial begin
     
 // end
-always @(*) begin
-    if(rst)begin
-        
-    //    pc_flag_mem = `False;
-       
-    end
-    else if(!rdy)begin
-        // ins_flag = 0;
-    end
-    else begin
-        // if(pc_flag)begin
-        //     if(!is_hit)begin
-        //     ins_ori = ins_mem;
-        //     pc_flag_mem = pc_flag;
-        //     end
-        //     else begin
-        //     pc_flag_mem = 0;
-        //     ins_ori = cache[pc[`ICID]];
-        //     end
-        // end
-        // else ;
-    end
-end
+
 always @(posedge clk) begin
    if(rst)begin
     valid <= `ICSZ'b0;  
@@ -62,7 +40,7 @@ always @(posedge clk) begin
     // is_hit <= 0;
    end 
    else if(!rdy)begin
-    ins_flag <= `False;
+    // ins_flag <= `False;
    end
     else begin
         

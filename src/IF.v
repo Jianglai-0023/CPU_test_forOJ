@@ -38,18 +38,7 @@ reg     is_stall;
     //calculate imm
     always @(*)begin//向decode输出结果
         //修改输出的bc
-        
-        if(rst)begin
-            ins_flag = 0;
-            ins_imm = 32'b0;
-            rd_val = 32'b0;
-        end
-        else if(!rdy)begin
-           ins_flag = 0;
-           ins_imm = 32'b0;
-           rd_val = 32'b0;
-        end
-        else if(jp_ok)begin
+         if(jp_ok)begin
             ins_flag = 0;
             ins_imm = 32'b0;
             rd_val = 32'b0;
@@ -117,6 +106,9 @@ reg     is_stall;
             is_stall <= 0;
             pc_cache <= 32'b0;
         end
+        else if(!rdy)begin
+            
+        end
         else if(jp_ok)begin 
             is_stall <= `False;
             // pc_flag <= `True;
@@ -130,6 +122,7 @@ reg     is_stall;
             if(ins_ori_flag)begin   
                 
                 // $display("%x",pc_cache);
+            //    $display("%x",ins_ori); 
             case(ins_ori[6:0])
             
                 `AUIPCOP:begin
